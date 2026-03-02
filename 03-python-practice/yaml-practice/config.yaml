@@ -1,0 +1,16 @@
+project: incident-analysis
+version: "1.0"
+database:
+  host: localhost
+  port: 3306
+  name: incident_db
+thresholds:
+  restart:
+    max_attempts: 3
+    interval_seconds: 60
+  alerts:
+    error_rate: 0.05
+    response_time_ms: 2000
+webhooks:
+  slack: "https://hooks.slack.com/xxx"
+  pagerduty: "https://events.pagerduty.com/xxx"

@@ -1,0 +1,10 @@
+{
+    "project": "incident-analysis",
+    "version": "1.0",
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "name": "incident_db"
+    },
+    "alerts": ["email", "slack", "webhook"]
+}

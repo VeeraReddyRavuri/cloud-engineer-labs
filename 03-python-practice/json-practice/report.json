@@ -1,0 +1,10 @@
+{
+    "date": "2024-12-12",
+    "total-errors": 15,
+    "critical": 5,
+    "top_errors": [
+        "timeout",
+        "disk full",
+        "Connection refused"
+    ]
+}
