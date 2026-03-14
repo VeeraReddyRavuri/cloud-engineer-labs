@@ -6,7 +6,8 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY app.py .
+#testing without .dockerignore and with it.
+COPY . .
 
 EXPOSE 8000
 
