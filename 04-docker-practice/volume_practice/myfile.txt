@@ -1,0 +1,124 @@
+version 2
+
+What I practiced:
+
+Volume Practice
+bash# Create a named volume
+docker volume create my-data
+
+# List volumes
+docker volume ls
+
+# Inspect it - see where Docker stores it on host
+docker volume inspect my-data
+Now use it — write data, kill container, prove data survives:
+bash# Run container 1, write data to volume
+docker run --rm \
+  --name writer \
+  -v my-data:/data \
+  alpine sh -c "echo 'this data will survive' > /data/test.txt"
+
+# Container is gone (--rm removes it automatically)
+# But data is still in the volume
+
+# Run container 2, read from same volume
+docker run --rm \
+  --name reader \
+  -v my-data:/data \
+  alpine sh -c "cat /data/test.txt"
+You'll see this data will survive — even though the first container no longer exists.
+
+Bind Mount Practice
+bash# Create a folder on your machine
+mkdir -p ~/2030/12lpa/practice/cloud-engineer-labs/04-docker-practice/volume-practice
+cd ~/2030/12lpa/practice/cloud-engineer-labs/04-docker-practice/volume-practice
+
+echo "version 1" > myfile.txt
+
+# Mount it into a container
+docker run --rm \
+  -v $(pwd):/app \
+  alpine cat /app/myfile.txt
+Now edit the file from your machine without rebuilding:
+bashecho "version 2" > myfile.txt
+
+# Run again - container sees the change immediately
+docker run --rm \
+  -v $(pwd):/app \
+  alpine cat /app/myfile.txt
+No rebuild. No restart. This is why bind mounts are used in development.
+
+See the Difference With MySQL
+This is directly relevant to your project:
+bash# WITHOUT volume - data dies with container
+docker run -d \
+  --name mysql-no-volume \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=testdb \
+  mysql:8.0
+
+# Wait a few seconds for MySQL to start
+sleep 10
+
+# Create a table
+docker exec mysql-no-volume mysql -usecret -psecret testdb \
+  -e "CREATE TABLE users (id INT, name VARCHAR(50)); INSERT INTO users VALUES (1, 'veera');"
+
+# Kill and remove container
+docker stop mysql-no-volume
+docker rm mysql-no-volume
+
+# Start fresh container - data is gone
+docker run -d \
+  --name mysql-no-volume \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=testdb \
+  mysql:8.0
+
+sleep 10
+
+docker exec mysql-no-volume mysql -usecret -psecret testdb \
+  -e "SELECT * FROM users;"
+# Error - table doesn't exist
+Now WITH a volume:
+bash# Clean up first
+docker stop mysql-no-volume
+docker rm mysql-no-volume
+
+# Create volume
+docker volume create mysql-data
+
+# Run WITH volume
+docker run -d \
+  --name mysql-with-volume \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=testdb \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8.0
+
+sleep 10
+
+# Create table again
+docker exec mysql-with-volume mysql -usecret -psecret testdb \
+  -e "CREATE TABLE users (id INT, name VARCHAR(50)); INSERT INTO users VALUES (1, 'veera');"
+
+# Kill and remove container
+docker stop mysql-with-volume
+docker rm mysql-with-volume
+
+# Start new container with SAME volume
+docker run -d \
+  --name mysql-with-volume \
+  -e MYSQL_ROOT_PASSWORD=secret \
+  -e MYSQL_DATABASE=testdb \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8.0
+
+sleep 10
+
+# Data is still there
+docker exec mysql-with-volume mysql -usecret -psecret testdb \
+  -e "SELECT * FROM users;"
+```
+
+You'll see `veera` in the results.
