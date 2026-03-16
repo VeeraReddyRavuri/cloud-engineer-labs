@@ -1,0 +1,22 @@
+services:
+  api:
+    build: .
+    container_name: nginx-practice-api
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-pracitce-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on: 
+      - api
+    networks:
+      - app-network
+    
+networks:
+  app-network:
+    driver: bridge
