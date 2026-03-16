@@ -4,10 +4,13 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-#testing without .dockerignore and with it.
-COPY . .
+COPY app.py .
+
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+USER appuser
 
 EXPOSE 8000
 
