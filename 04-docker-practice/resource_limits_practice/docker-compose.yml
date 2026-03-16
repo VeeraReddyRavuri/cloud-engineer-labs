@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: nginx:alpine
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.5"
+        reservations:
+          memory: 128m
+          cpus: "0.25"
