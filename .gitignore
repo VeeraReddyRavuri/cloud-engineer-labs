@@ -5,3 +5,15 @@ venv/
 .env
 *.pyc
 *.DS_store
+
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+
+crash.log
+
+
+*.tfvars
+
+*.pem   
