@@ -20,5 +20,8 @@ provider "aws" {
 module "vpc" {
   source       = "./modules/vpc"    # path to module folder
   vpc_cidr     = var.vpc_cidr       # passing values in
+  public_subnet = var.public_subnet
+  private_subnet = var.private_subnet
+  aws_region = var.aws_region
   project_name = var.project_name
 }
