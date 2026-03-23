@@ -5,6 +5,13 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "s3" {
+    bucket = "YOUR_BUCKET_NAME"
+    key = "dev/terraform.tfstate"
+    region = "us-east-1"
+    dynamodb_table = "YOUR_TABLE"
+    encrypt = true
+  }
 }
 provider "aws" {
   region = "us-east-1"
