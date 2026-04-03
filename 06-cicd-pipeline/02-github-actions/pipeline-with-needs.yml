@@ -1,0 +1,47 @@
+name: pipeline with needs
+
+on:
+  push:
+    branches: main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running lint"
+  
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running test"
+  
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running build"
+  
+  scan:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running scan"
+  
+  push:
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running push"
+  
+  deploy:
+    needs: push
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running deploy"
+  
+  rollback:
+    needs: deploy
+    if: needs.deploy.result == "failure"
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "running rollback"
